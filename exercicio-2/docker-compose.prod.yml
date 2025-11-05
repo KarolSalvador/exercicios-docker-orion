@@ -1,0 +1,59 @@
+version: "3.8"
+
+# 1. volumes para persistência no DB
+volumes:
+  postgres_data:
+    name: exercicio2_postgres_data
+
+services:
+  # Serviço DB
+  db:
+    container_name: postgres_db_prod
+    image: postgres:15-alpine
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    # Mantido o volume para garantir que os dados de produção persistam
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # API: configuração de produção
+  api:
+    container_name: api_prod
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      #estágio de produção especificado para garantir uma imagem final leve
+      target: production
+
+    # 1. Exposição de porta para acesso externo (onde o proxy vai "bater")
+    ports:
+      - "3000:3000"
+
+    # Exercício tem como requisito de produção para não montar volumes de código afimd e garantir que a versão da imagem seja a única a ser executada
+    # Volumes removidos intencionalmente
+
+    env_file:
+      - ./.env
+    environment:
+      DB_HOST: db
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      # Configura o Node.js para modo de produção
+      NODE_ENV: production
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    command: npm start
