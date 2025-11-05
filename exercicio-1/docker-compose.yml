@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  # Nome do serviço (container)
+  app:
+    # Nome do container
+    # Facilita identificar o container ao listar com 'docker ps'
+    container_name: my_app
+
+    # 1. Faz o build da imagem a partir do Dockerfile que está no diretório atual
+    build: .
+
+    # 2. Mapeamento de portas: HOST:CONTAINER
+    # Acesso no navegador através da porta 3000 do computador (que é o Host)
+    # que será redirecionada para a porta 3000 dentro do container.
+    ports:
+      - "3000:3000"
+
+    # 3. Montagem de volume
+    # O volume '- .:/usr/src/app' mapeia a pasta atual para o WORKDIR dentro do container
+    # Isso irá permitir o live-reload. Embora o live-reload não seja utilizado neste projeto,
+    # o volume foi mantido por ser a forma recomendada de montar o código-fonte durante o desenvolvimento.
+    volumes:
+      - .:/usr/src/app
+
+    # Define o diretório de trabalho dentro do container
+    # É o local onde os comandos serão executados e o código ficará disponível
+    working_dir: /usr/src/app
+
+    # Variáveis de ambiente
+    # Incluídas para mostrar como configurar o ambiente de execução
+    # NODE_ENV define o ambiente de desenvolvimento
+    environment:
+      - NODE_ENV=development
+
+    # Comando de inicialização
+    command: npm start

@@ -1,0 +1,15 @@
+# Dependências de Node
+/node_modules
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Variáveis de Ambiente (Melhor Prática)
+.env
+
+# Outros arquivos ignorados
+/dist
+.DS_Store
