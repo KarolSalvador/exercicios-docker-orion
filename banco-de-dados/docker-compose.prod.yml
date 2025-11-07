@@ -1,0 +1,56 @@
+version: "3.8"
+
+# Herda as configurações base de rede e volumes
+volumes:
+  postgres_data:
+    name: orion_postgres_data_prod
+  mongo_data:
+    name: orion_mongo_data_prod
+
+networks:
+  orion_network:
+    driver: bridge
+
+services:
+  # Base para o ambiente de Produção
+  db_postgres:
+    image: postgres:16-alpine
+    container_name: orion_postgres_db_prod
+    restart: always
+    environment:
+      POSTGRES_USER: orion_user
+      POSTGRES_PASSWORD: orion_password
+      POSTGRES_DB: orion_db
+    ports:
+      # Porta exposta para acesso (simulando que um servço a usaria)
+      - "5432:5432"
+    volumes:
+      # Volume para persistência de dados
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "orion_user", "-d", "orion_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - orion_network
+
+  db_mongo:
+    image: mongo:latest
+    container_name: orion_mongo_db_prod
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: orion_admin
+      MONGO_INITDB_ROOT_PASSWORD: orion_admin_pass
+    ports:
+      - "27017:27017"
+    volumes:
+      # Volume para persistência de dados
+      - mongo_data:/data/db
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.runCommand({ping: 1})" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - orion_network
