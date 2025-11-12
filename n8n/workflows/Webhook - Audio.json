@@ -1,0 +1,395 @@
+{
+  "name": "Webhook - Audio",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -16,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "body.data.message.base64",
+        "options": {
+          "mimeType": "={{ $json.body.data.message.audioMessage.mimetype }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        352
+      ],
+      "id": "d97155ec-2312-48db-98fb-9cedf120e095",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "Você deve transcrever o conteúdo do audio.\n\nComece o texto com o prefixo: \"Transcrição do Audio:\"\n\nAtenção, responda diretamete sem introdução ou conclusão no texto.",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        384,
+        352
+      ],
+      "id": "77ae9dcc-4b1f-49cf-809f-3423fec2a0c6",
+      "name": "Analyze audio",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HKT8zHQzwwIaWYCs",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "WodaN9PgltmMEAkW",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/WodaN9PgltmMEAkW",
+          "cachedResultName": "Webhook - Send Text"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        816,
+        352
+      ],
+      "id": "4b131113-3b37-47ad-a29c-35b797d4aae9",
+      "name": "Call 'Webhook - Send Text'"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"body\": {\n    \"instance\": \"{{ $('When Executed by Another Workflow').item.json.body.instance }}\",\n    \"data\": {\n      \"key\": { \"remoteJid\": \"{{ $('When Executed by Another Workflow').item.json.body.data.key.remoteJid }}\" },\n      \"message\": {\n        \"conversation\": {{ JSON.stringify($json.content.parts[0].text) }}\n      }\n    }\n  }\n   \n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        352
+      ],
+      "id": "5872d234-2e17-48b0-a64e-ecf1cc3a084d",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "user-agent": "axios/1.12.2",
+            "content-length": "10864",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "n8n:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "messages.upsert",
+            "instance": "n8norion",
+            "data": {
+              "key": {
+                "remoteJid": "558596742948@s.whatsapp.net",
+                "remoteJidAlt": "36490444816608@lid",
+                "fromMe": true,
+                "id": "AC86F005557E6266550EC40CCF7E5D58",
+                "participant": "",
+                "addressingMode": "pn"
+              },
+              "pushName": "Karol Salvador",
+              "status": "SERVER_ACK",
+              "message": {
+                "audioMessage": {
+                  "url": "https://mmg.whatsapp.net/v/t62.7117-24/35487476_725351747249222_510375847521500974_n.enc?ccb=11-4&oh=01_Q5Aa3AGlsmimLOM_sNbLrempyGctgUyZvzJ3ax0E0SMTd-KBZg&oe=693BC40B&_nc_sid=5e03e0&mms3=true",
+                  "mimetype": "audio/ogg; codecs=opus",
+                  "fileSha256": {
+                    "0": 118,
+                    "1": 255,
+                    "2": 192,
+                    "3": 51,
+                    "4": 125,
+                    "5": 197,
+                    "6": 186,
+                    "7": 248,
+                    "8": 186,
+                    "9": 245,
+                    "10": 136,
+                    "11": 100,
+                    "12": 149,
+                    "13": 150,
+                    "14": 4,
+                    "15": 193,
+                    "16": 107,
+                    "17": 153,
+                    "18": 223,
+                    "19": 65,
+                    "20": 104,
+                    "21": 132,
+                    "22": 69,
+                    "23": 92,
+                    "24": 223,
+                    "25": 147,
+                    "26": 57,
+                    "27": 196,
+                    "28": 108,
+                    "29": 104,
+                    "30": 125,
+                    "31": 61
+                  },
+                  "fileLength": {
+                    "low": 6241,
+                    "high": 0,
+                    "unsigned": true
+                  },
+                  "seconds": 4,
+                  "ptt": true,
+                  "mediaKey": {
+                    "0": 88,
+                    "1": 43,
+                    "2": 88,
+                    "3": 251,
+                    "4": 79,
+                    "5": 38,
+                    "6": 66,
+                    "7": 246,
+                    "8": 140,
+                    "9": 100,
+                    "10": 138,
+                    "11": 84,
+                    "12": 132,
+                    "13": 200,
+                    "14": 57,
+                    "15": 124,
+                    "16": 146,
+                    "17": 16,
+                    "18": 34,
+                    "19": 149,
+                    "20": 93,
+                    "21": 72,
+                    "22": 110,
+                    "23": 101,
+                    "24": 116,
+                    "25": 206,
+                    "26": 28,
+                    "27": 202,
+                    "28": 255,
+                    "29": 195,
+                    "30": 165,
+                    "31": 27
+                  },
+                  "fileEncSha256": {
+                    "0": 160,
+                    "1": 242,
+                    "2": 44,
+                    "3": 233,
+                    "4": 136,
+                    "5": 60,
+                    "6": 187,
+                    "7": 21,
+                    "8": 35,
+                    "9": 93,
+                    "10": 95,
+                    "11": 48,
+                    "12": 184,
+                    "13": 137,
+                    "14": 23,
+                    "15": 34,
+                    "16": 237,
+                    "17": 94,
+                    "18": 112,
+                    "19": 219,
+                    "20": 217,
+                    "21": 21,
+                    "22": 43,
+                    "23": 252,
+                    "24": 26,
+                    "25": 20,
+                    "26": 137,
+                    "27": 71,
+                    "28": 61,
+                    "29": 125,
+                    "30": 167,
+                    "31": 149
+                  },
+                  "directPath": "/v/t62.7117-24/35487476_725351747249222_510375847521500974_n.enc?ccb=11-4&oh=01_Q5Aa3AGlsmimLOM_sNbLrempyGctgUyZvzJ3ax0E0SMTd-KBZg&oe=693BC40B&_nc_sid=5e03e0",
+                  "mediaKeyTimestamp": {
+                    "low": 1762942354,
+                    "high": 0,
+                    "unsigned": false
+                  },
+                  "waveform": {
+                    "0": 0,
+                    "1": 0,
+                    "2": 0,
+                    "3": 20,
+                    "4": 0,
+                    "5": 0,
+                    "6": 0,
+                    "7": 0,
+                    "8": 0,
+                    "9": 0,
+                    "10": 0,
+                    "11": 0,
+                    "12": 0,
+                    "13": 0,
+                    "14": 0,
+                    "15": 0,
+                    "16": 0,
+                    "17": 0,
+                    "18": 0,
+                    "19": 0,
+                    "20": 0,
+                    "21": 8,
+                    "22": 38,
+                    "23": 27,
+                    "24": 8,
+                    "25": 0,
+                    "26": 0,
+                    "27": 27,
+                    "28": 25,
+                    "29": 26,
+                    "30": 18,
+                    "31": 17,
+                    "32": 20,
+                    "33": 10,
+                    "34": 8,
+                    "35": 25,
+                    "36": 19,
+                    "37": 18,
+                    "38": 24,
+                    "39": 19,
+                    "40": 21,
+                    "41": 0,
+                    "42": 5,
+                    "43": 2,
+                    "44": 0,
+                    "45": 0,
+                    "46": 0,
+                    "47": 0,
+                    "48": 0,
+                    "49": 0,
+                    "50": 0,
+                    "51": 0,
+                    "52": 0,
+                    "53": 0,
+                    "54": 0,
+                    "55": 0,
+                    "56": 0,
+                    "57": 0,
+                    "58": 0,
+                    "59": 0,
+                    "60": 0,
+                    "61": 0,
+                    "62": 0,
+                    "63": 0
+                  }
+                },
+                "base64": "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"
+              },
+              "contextInfo": null,
+              "messageType": "audioMessage",
+              "messageTimestamp": 1762942356,
+              "instanceId": "c5bbe8aa-fe7f-4936-a793-4cbc37447443",
+              "source": "android"
+            },
+            "destination": "http://n8n:5678/webhook/wpp",
+            "date_time": "2025-11-12T07:12:37.567Z",
+            "sender": "558596742948@s.whatsapp.net",
+            "server_url": "http://localhost:8080",
+            "apikey": "F428CC68A086-473F-8899-46A34B56A472"
+          },
+          "webhookUrl": "http://localhost:5678/webhook/wpp",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Analyze audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Call 'Webhook - Send Text'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze audio": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "20c0a051-ae44-431f-abb8-391d78cd98b2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a8b21c31b176b3c3d7003a1503f53d6971d688c811f7c8c87cff0f713e28dc7e"
+  },
+  "id": "UtGB8WxePty5CUnQ",
+  "tags": []
+}
