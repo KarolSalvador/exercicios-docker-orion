@@ -1,0 +1,10 @@
+.env
+
+# Dados de Volume do Docker/Postgres
+/postgres_data_orion/
+
+# Dados de Volume do Docker/Redis
+/redis_data_orion/
+
+# Dados de Volume do Docker/n8n
+/n8n_data_orion/

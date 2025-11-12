@@ -1,0 +1,174 @@
+{
+  "name": "Webhook - Send Text",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -48
+      ],
+      "id": "9d879a2d-1ef4-42ef-8bc0-b9e3861093db",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://evolution-api:8080/message/sendText/{{ $('When Executed by Another Workflow').item.json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "0R10NxtP0wsAd2qWe5Saran"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('When Executed by Another Workflow').item.json.body.data.key.remoteJid }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ JSON.parse($json.content.parts[0].text).message }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        80,
+        -48
+      ],
+      "id": "f9fd2e0a-a12e-4dff-ab35-1bb2d5c446a4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.body.data.message.conversation }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "Você é um bot de WhatsApp que deve responder informalmente e deve obrigatoriamente retornar a resposta como: \n``` {\"message\": \"response\" }\n ```"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -48
+      ],
+      "id": "c5cb4dbd-f6cc-4c82-892f-a56e41241f03",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HKT8zHQzwwIaWYCs",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "user-agent": "axios/1.12.2",
+            "content-length": "656",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "n8n:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "messages.upsert",
+            "instance": "n8norion",
+            "data": {
+              "key": {
+                "remoteJid": "558596742948@s.whatsapp.net",
+                "remoteJidAlt": "36490444816608@lid",
+                "fromMe": true,
+                "id": "ACF9A93FD8D0E7994B69DE9C4DA93883",
+                "participant": "",
+                "addressingMode": "pn"
+              },
+              "pushName": "Karol Salvador",
+              "status": "SERVER_ACK",
+              "message": {
+                "conversation": "Ola"
+              },
+              "messageType": "conversation",
+              "messageTimestamp": 1762940551,
+              "instanceId": "c5bbe8aa-fe7f-4936-a793-4cbc37447443",
+              "source": "android"
+            },
+            "destination": "http://n8n:5678/webhook/wpp",
+            "date_time": "2025-11-12T06:42:31.687Z",
+            "sender": "558596742948@s.whatsapp.net",
+            "server_url": "http://localhost:8080",
+            "apikey": "F428CC68A086-473F-8899-46A34B56A472"
+          },
+          "webhookUrl": "http://localhost:5678/webhook/wpp",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9975c291-c118-471c-8bae-741e0421ace6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a8b21c31b176b3c3d7003a1503f53d6971d688c811f7c8c87cff0f713e28dc7e"
+  },
+  "id": "WodaN9PgltmMEAkW",
+  "tags": []
+}
